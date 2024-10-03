@@ -104,7 +104,7 @@ Signed-off-by: Ziyang Huang <hzyitc@outlook.com>
  	s->reg_size[1] = HAL_SEQ_WCSS_UMAC_CE1_DST_REG(ab) -
 --- a/drivers/net/wireless/ath/ath11k/hw.c
 +++ b/drivers/net/wireless/ath/ath11k/hw.c
-@@ -2345,9 +2345,9 @@ const struct ce_ie_addr ath11k_ce_ie_add
+@@ -2268,9 +2268,9 @@ const struct ce_ie_addr ath11k_ce_ie_add
  };
  
  const struct ce_ie_addr ath11k_ce_ie_addr_ipq5018 = {
@@ -117,7 +117,7 @@ Signed-off-by: Ziyang Huang <hzyitc@outlook.com>
  };
  
  const struct ce_remap ath11k_ce_remap_ipq5018 = {
-@@ -2878,13 +2878,13 @@ const struct ath11k_hw_regs ipq5018_regs
+@@ -2801,13 +2801,13 @@ const struct ath11k_hw_regs ipq5018_regs
  	.hal_reo_status_hp = 0x00003070,
  
  	/* WCSS relative address */
@@ -137,9 +137,9 @@ Signed-off-by: Ziyang Huang <hzyitc@outlook.com>
  	/* WBM Idle address */
 --- a/drivers/net/wireless/ath/ath11k/hw.h
 +++ b/drivers/net/wireless/ath/ath11k/hw.h
-@@ -82,7 +82,12 @@
+@@ -81,7 +81,12 @@
+ #define ATH11K_M3_FILE			"m3.bin"
  #define ATH11K_REGDB_FILE_NAME		"regdb.bin"
- #define NODE_ID_BASE                   	0x27
  
 -#define ATH11K_CE_OFFSET(ab)	(ab->mem_ce - ab->mem)
 +#define ATH11K_REG_TYPE_MASK		GENMASK(31, 28)
