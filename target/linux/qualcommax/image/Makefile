@@ -13,15 +13,23 @@ define Device/Default
 endef
 
 define Device/FitImage
-	KERNEL_SUFFIX := -uImage.itb
-	KERNEL = kernel-bin | libdeflate-gzip | fit gzip $$(KDIR)/image-$$(DEVICE_DTS).dtb
-	KERNEL_NAME := Image
+  KERNEL_SUFFIX := -fit-uImage.itb
+  KERNEL_NAME := Image
+  KERNEL = kernel-bin | gzip | fit gzip $$(KDIR)/image-$$(DEVICE_DTS).dtb
+  KERNEL_INITRAMFS = kernel-bin | gzip | fit gzip $$(KDIR)/image-$$(DEVICE_DTS).dtb
 endef
 
 define Device/FitImageLzma
 	KERNEL_SUFFIX := -uImage.itb
 	KERNEL = kernel-bin | lzma | fit lzma $$(KDIR)/image-$$(DEVICE_DTS).dtb
 	KERNEL_NAME := Image
+endef
+
+define Device/FitImageLzmaQca
+	KERNEL_SUFFIX := -uImage.itb
+	KERNEL_NAME := Image
+  	KERNEL = kernel-bin | gzip | fit gzip $$(KDIR)/image-$$(DEVICE_DTS).dtb
+  	KERNEL_INITRAMFS = kernel-bin | gzip | fit gzip $$(KDIR)/image-$$(DEVICE_DTS).dtb
 endef
 
 define Device/EmmcImage
@@ -32,7 +40,12 @@ endef
 
 define Device/UbiFit
 	KERNEL_IN_UBI := 1
-	IMAGES += factory.ubi
+	FILESYSTEMS := squashfs ubifs ubi
+	ROOTFSNAME_IN_UBI := ubi_rootfs
+  	KERNEL_NAME := Image
+  	IMAGES := sysupgrade.tar nand-factory.img factory.ubi
+  	IMAGE/sysupgrade.tar := sysupgrade-tar | append-metadata | append-gl-metadata
+  	IMAGE/nand-factory.img := append-ubi | qsdk-ipq-factory-nand | append-metadata
 	IMAGE/factory.ubi := append-ubi
 endef
 

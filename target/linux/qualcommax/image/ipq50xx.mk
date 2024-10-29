@@ -1,3 +1,25 @@
+define Device/glinet_gl-b3000
+  	$(call Device/FitImageLzmaQca)
+  	$(call Device/FitImage)
+  	$(call Device/UbiFit)
+  	KERNEL_LOADADDR := 0x41080000
+	DEVICE_VENDOR := GL.iNET
+  	DEVICE_MODEL := GL-B3000
+  	BLOCKSIZE := 128k
+  	PAGESIZE := 2048
+  	DEVICE_DTS_CONFIG:=config@mp03.5-c1
+  	SUPPORTED_DEVICES:=b3000
+  	IMAGES := sysupgrade.tar nand-factory.img factory.ubi
+  	IMAGE/sysupgrade.tar := sysupgrade-tar | append-metadata
+  	IMAGE/nand-factory.img := append-ubi | qsdk-ipq-factory-nand | append-metadata
+  	IMAGE/factory.ubi := append-ubi
+  	DEVICE_PACKAGES := \
+    ath11k-firmware-ipq5018 \
+  	ath11k-firmware-qcn6122 \
+  	ipq-wifi-glinet_gl-b3000
+endef
+TARGET_DEVICES += glinet_gl-b3000
+
 define Device/linksys_mx_atlas6
 	$(call Device/FitImageLzma)
 	DEVICE_VENDOR := Linksys
