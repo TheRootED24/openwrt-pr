@@ -9,3 +9,5 @@
 /etc/shinit
 /etc/sysctl.conf
 /etc/rc.local
+/etc/config/ubootenv
+/etc/fw_env.config

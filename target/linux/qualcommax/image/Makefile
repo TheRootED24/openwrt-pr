@@ -4,6 +4,7 @@ include $(INCLUDE_DIR)/image.mk
 define Device/Default
 	PROFILES := Default
 	KERNEL_LOADADDR := 0x41000000
+	SOC := ipq5018
 	DEVICE_DTS = $$(SOC)-$(lastword $(subst _, ,$(1)))
 	DEVICE_DTS_CONFIG := config@1
 	DEVICE_DTS_DIR := $(DTS_DIR)/qcom

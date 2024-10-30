@@ -25,7 +25,8 @@ platform_do_upgrade() {
 		fw_setenv auto_recovery yes
 		nand_do_upgrade "$1"
 		;;
-	glinet,gl-b3000)
+	glinet,gl-b3000|\
+	b3000)
     	REQUIRE_IMAGE_METADATA=0
     	CI_UBIPART="rootfs"
     	[ "$(find_mtd_chardev rootfs)" ] && CI_UBIPART="rootfs"
