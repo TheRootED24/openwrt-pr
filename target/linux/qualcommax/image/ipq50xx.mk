@@ -1,3 +1,29 @@
+define Device/glinet_gl-b3000
+  	$(call Device/FactoryImage)
+  	$(call Device/FitImage)
+  	$(call Device/UbiFit)
+	DEVICE_VENDOR := GL.iNET
+  	DEVICE_MODEL := GL-B3000
+  	KERNEL_LOADADDR := 0x41080000
+  	KERNEL_SIZE := 8192k
+	IMAGE_SIZE := 83968k
+	NAND_SIZE := 256m
+  	BLOCKSIZE := 128k
+  	PAGESIZE := 2048
+  	SOC := ipq5018
+  	UBINIZE_OPTS := -E 5	# EOD marks to "hide" factory sig at EOF
+  	DEVICE_DTS_CONFIG:=config@mp03.5-c1
+  	SUPPORTED_DEVICES:=b3000, glinet,gl-b3000
+  	IMAGES := sysupgrade.tar nand-factory.img factory.ubi 
+  	IMAGE/sysupgrade.tar := sysupgrade-tar | append-metadata
+  	IMAGE/nand-factory.img := append-ubi | qsdk-ipq-factory-nand | append-metadata
+  	IMAGE/factory.ubi := append-ubi
+  	DEVICE_PACKAGES := \
+  	ath11k-firmware-qcn6122 \
+  	ipq-wifi-glinet_gl-b3000
+endef
+TARGET_DEVICES += glinet_gl-b3000
+
 define Device/linksys_mx_atlas6
 	$(call Device/FitImageLzma)
 	DEVICE_VENDOR := Linksys

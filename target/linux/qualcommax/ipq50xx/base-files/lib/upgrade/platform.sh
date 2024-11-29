@@ -14,7 +14,7 @@ platform_do_upgrade() {
 	linksys,mx5500)
 		boot_part="$(fw_printenv -n boot_part)"
 		if [ "$boot_part" -eq "1" ]; then
-			fw_setenv boot_part 2
+		fw_setenv boot_part 2
 			CI_KERNPART="alt_kernel"
 			CI_UBIPART="alt_rootfs"
 		else
@@ -25,6 +25,12 @@ platform_do_upgrade() {
 		fw_setenv auto_recovery yes
 		nand_do_upgrade "$1"
 		;;
+	glinet,gl-b3000)
+		REQUIRE_IMAGE_METADATA=0
+		CI_UBIPART="rootfs"
+		[ "$(find_mtd_chardev rootfs)" ] && CI_UBIPART="rootfs"
+		nand_do_upgrade "$1"
+       		;;
 	*)
 		default_do_upgrade "$1"
 		;;
