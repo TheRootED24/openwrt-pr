@@ -17,10 +17,11 @@ case "$FIRMWARE" in
 		ath11k_remove_regdomain
 		ath11k_set_macflag
 		;;
+	glinet,gl-x2000|\
 	glinet,gl-b3000)
 		caldata_extract "0:ART" 0x1000 0x20000
 		label_mac=$(get_mac_label_dt)
-		ath11k_patch_mac $(macaddr_add $label_mac 1) 0
+		ath11k_patch_mac $(macaddr_add $label_mac 2) 0
 		ath11k_remove_regdomain
 		ath11k_set_macflag
 		;;
@@ -35,10 +36,11 @@ case "$FIRMWARE" in
 		ath11k_remove_regdomain
 		ath11k_set_macflag
 		;;
+	glinet,gl-x2000|\
 	glinet,gl-b3000)
 		caldata_extract "0:ART" 0x26800 0x20000
 		label_mac=$(get_mac_label_dt)
-		ath11k_patch_mac $(macaddr_add $label_mac 2) 0
+		ath11k_patch_mac $(macaddr_add $label_mac 3) 0
 		ath11k_remove_regdomain
 		ath11k_set_macflag
 		;;

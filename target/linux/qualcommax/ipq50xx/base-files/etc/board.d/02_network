@@ -11,10 +11,11 @@ ipq50xx_setup_interfaces()
 		linksys,mx5500)
 			ucidef_set_interfaces_lan_wan "lan1 lan2 lan3" "wan"
 			;;
+		glinet,gl-x2000)
+			ucidef_set_interfaces_lan_wan "lan" "wan"
 		glinet,gl-b3000)
 			ucidef_set_interfaces_lan_wan "lan1 lan2" "wan"
 			;;
-	esac
 	esac
 }
 
@@ -33,6 +34,7 @@ ipq50xx_setup_macs()
 			wan_mac=$label_mac
 			ucidef_set_network_device_mac eth1 $label_mac
 		;;
+		glinet,gl-x2000|\
 		glinet,gl-b3000)
 			label_mac=$(get_mac_label_dt)
 			lan_mac=$label_mac
