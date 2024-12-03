@@ -5,50 +5,156 @@
 
 #include <dt-bindings/gpio/gpio.h>
 #include <dt-bindings/input/input.h>
-#include <dt-bindings/leds/common.h>
 
 / {
 	model = "GL.iNet X2000, Inc. IPQ5018/AP-MP03.5-C1";
 	compatible = "glinet,gl-x2000", "qcom,ipq5018-ap-mp03.5-c1", "qcom,ipq5018-mp03.5", "qcom,ipq5018";
-	
+
 	interrupt-parent = <&intc>;
-	
+
 	aliases {
 		serial0 = &blsp1_uart1;
-		
+		serial1 = &blsp1_uart2;
 		ethernet0 = &dp1;
 		ethernet1 = &dp2;
 		label-mac-device = &dp2;
 		
-		led-boot = &led_system_blue;
-		led-failsafe = &led_status_white;
-		led-running = &led_status_white;
-		led-upgrade = &led_system_blue;
+		led-boot = &led_system_power;
+		led-failsafe = &led_status_internet;
+		led-running = &led_status_internet;
+		led-upgrade = &led_system_power;
 	};
 
 	chosen {
-		bootargs-append = " root=/dev/ubiblock0_1 swiotlb=1 coherent_pool=2M";
+		bootargs-append = " root=/dev/ubiblock0_2 swiotlb=1 coherent_pool=2M";
 		stdout-path = "serial0:115200n8";
 	};
-	
+
+	gl-hw {
+                compatible = "gl-hw-info";
+                model = "x2000";
+                radio = "radio0";
+                wan = "eth0";
+                lan = "eth1";
+                dfs;
+                sim = "dual";
+                usb-port = "1-1.3";
+                build-in-modem = "2-1";
+                reset-button = "gpio-27";
+                flash_size = <128>;
+                mcu = "/dev/ttyMSM1,9600";
+                fan = "hwmon0 cooling_device0";
+                temperature = "/sys/devices/virtual/thermal/thermal_zone0/temp";
+                fan_pwm_max = "145";
+                factory_data {
+                        device_mac = "0:ART", "0x6";
+                        device_ddns = "0:ART", "0x10";
+                        device_sn_bak = "0:ART", "0x20";
+                        device_sn = "0:ART", "0x30";
+                        country_code = "0:ART", "0x88";
+                        device_cert = "0:ART", "0x50000";
+                };
+    };
+
+	gl_fan {
+			compatible = "gl-fan";
+			interrupt-parent = <&tlmm>;
+			interrupts = <26 IRQ_TYPE_EDGE_RISING>;
+	};
+
+	gpio-export {
+			compatible = "gpio-export";
+			cellular_power {
+					gpio-export,name = "cellular_power";
+					gpio-export,output = <1>;
+					gpios = <&tlmm 38 GPIO_ACTIVE_HIGH>;
+			};
+
+			cellular_reset {
+					gpio-export,name = "cellular_reset";
+					gpio-export,output = <0>;
+					gpios = <&tlmm 22 GPIO_ACTIVE_HIGH>;
+			};
+
+	};
+
 	leds {
 		compatible = "gpio-leds";
 		pinctrl-0 = <&leds_pins>;
 		pinctrl-names = "default";
 
-		led_system_blue: led_system_blue {
-			label = "led_system_blue";
-			gpio = <&tlmm 24 0>;
-			default-state = "on";
-		};
-		
-		led_status_white: led_status_white {
-			label = "led_status_white";
-			gpio = <&tlmm 23 0>;
-			default-state = "off";
-		};
+        	led_system_power: led_system_power {
+            	label = "led_system_power";
+				gpios = <&tlmm 28 GPIO_ACTIVE_HIGH>;
+				default-state = "on";
+        	};
+
+        	led_status_internet: led_status_internet {
+            	label = "led_status_internet";
+				gpios = <&tlmm 32 GPIO_ACTIVE_HIGH>;
+				default-state = "off";
+        	};
+
+			led_wifi_2g {
+				label = "wifi:2g";
+				gpios = <&tlmm 1 GPIO_ACTIVE_HIGH>;
+				default-state = "off";
+			};
+
+			led_wifi_5g {
+				label = "wifi:5g";
+				gpios = <&tlmm 31 GPIO_ACTIVE_HIGH>;
+				default-state = "off";
+			};
+
+			led_5g_signal1 {
+				label = "5G:signal:led1";
+				gpios = <&tlmm 44 GPIO_ACTIVE_HIGH>;
+				default-state = "off";
+			};
+
+			led_5g_signal2 {
+				label = "5G:signal:led2";
+				gpios = <&tlmm 24 GPIO_ACTIVE_HIGH>;
+				default-state = "off";
+			};
+
+			led_5g_signal3 {
+				label = "5G:signal:led3";
+				gpios = <&tlmm 17 GPIO_ACTIVE_HIGH>;
+				default-state = "off";
+			};
+
+			led_5g_signal4 {
+				label = "5G:signal:led4";
+				gpios = <&tlmm 19 GPIO_ACTIVE_HIGH>;
+				default-state = "off";
+			};
 	};
-	
+
+	pwm-fan {
+			compatible = "pwm-fan";
+			pinctrl-0 = <&fan_pins>;
+			pinctrl-names = "default";
+			cooling-min-state = <0>;
+			cooling-max-state = <255>;
+			#cooling-cells = <2>;
+			pwms = <&pwm 3 40000 0>;
+			cooling-levels = <0 36 36 36 36 36 36 36 36 36 36 36 36 36 36 36 36 36 36 36
+							36 36 36 36 36 36 36 36 36 36 36 36 36 36 36 36 36 37 38 39
+							40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59
+							60 61 62 63 64 65 66 67 68 69 70 71 72 73 74 75 76 77 78 79
+							80 81 82 83 84 85 86 87 88 89 90 91 92 93 94 95 96 97 98 99
+							100 101 102 103 104 105 106 107 108 109 110 111 112 113 114 115 116 117 118 119
+							120 121 122 123 124 125 126 127 128 129 130 131 132 133 134 135 136 137 138 139
+							140 141 142 143 144 145 146 147 148 149 150 151 152 153 154 155 156 157 158 159
+							160 161 162 163 164 165 166 167 168 169 170 171 172 173 174 175 176 177 178 179
+							180 181 182 183 184 185 186 187 188 189 190 191 192 193 194 195 196 197 198 199
+							200 201 202 203 204 205 206 207 208 209 210 211 212 213 214 215 216 217 218 219
+							220 221 222 223 224 225 226 227 228 229 230 231 232 233 234 235 236 237 238 239
+							240 241 242 243 244 245 246 247 248 249 250 251 252 253 254 255>;
+	};
+
 	keys {
 		compatible = "gpio-keys";
 		pinctrl-0 = <&button_pins>;
@@ -94,8 +200,10 @@
 		// MAC1 ---SGMII---> QCA8337 SerDes
 		port@1 {
 			port_id = <2>;
+			mdiobus = <&mdio1>;
 			forced-speed = <1000>;
 			forced-duplex = <1>;
+			phy_address = <4>;
 		};
 	};
 };
@@ -133,7 +241,6 @@
 	nvmem-cells = <&macaddr_dp2>;
 	nvmem-cell-names = "mac-address";
 	
-	
 	fixed-link {
 		speed = <1000>;
 		full-duplex;
@@ -156,109 +263,11 @@
 	pinctrl-names = "default";
 	reset-gpios = <&tlmm 39 GPIO_ACTIVE_LOW>;
 
-
 	// QCA8337 Phy0 -> WAN
-	qca8337_0: ethernet-phy@0 {
-		reg = <0>;
-	};
-
-	// QCA8337 Phy1 -> LAN1
-	qca8337_1: ethernet-phy@1 {
-		reg = <1>;
-	};
-
-
-	// QCA8337 Phy3 -> LAN2
-	qca8337_2: ethernet-phy@2 {
-		reg = <2>;
-	};
-
-
-	// QCA8337 Phy2 -> IPQ5018 GE Phy
-	qca8337_3: ethernet-phy@3 {
-		reg = <3>;
-	};
-	
-	// QCA8337 Phy4 -> LAN3
-	qca8337_4: ethernet-phy@4 {
+	ethernet-phy@0 {
 		reg = <4>;
 	};
 
-	// QCA8337 switch
-	switch1: ethernet-switch@17 {
-		compatible = "qca,qca8337";
-		reg = <17>;
-		#address-cells = <1>;
-		#size-cells = <0>;
-
-		//switch_cpu_bmp = <0x40>;  /* cpu port bitmap */
-		//switch_lan_bmp = <0x0c>; /* lan port bitmap */
-		//switch_wan_bmp = <0x02>;  /* wan port bitmap */
-
-		ports {
-			#address-cells = <1>;
-			#size-cells = <0>;
-			
-			// QCA8337 Phy0 -> WAN
-			port@1 {
-				reg = <1>;
-				label = "wan";
-				phy-handle = <&qca8337_0>;
-				port_id = <1>;
-				phy_address = <0>;
-			};
-			
-			// QCA8337 Phy1 -> LAN1
-			port@2 {
-				reg = <2>;
-				label = "lan1";
-				phy-handle = <&qca8337_1>;
-				port_id = <2>;
-				phy_address = <1>;
-			};
-
-			// QCA8337 Phy3 -> LAN2
-			port@3 {
-				reg = <3>;
-				label = "lan2";
-				phy-handle = <&qca8337_2>;
-				port_id = <3>;
-				phy_address = <2>;
-				
-			};
-
-			// QCA8337 Phy2 -> IPQ5018 GE Phy
-			port@4 {
-				reg = <4>;
-				label = "cpu1";
-				phy-handle = <&qca8337_3>;
-				port_id = <4>;
-				phy_address = <3>;
-				status = "disabled";
-			};
-			
-			// N/A
-			port@5 {
-				reg = <5>;
-				label = "lan3";
-				phy-handle = <&qca8337_4>;
-				status = "disabled";
-			};
-			
-			port@6 {
-				reg = <6>;
-				label = "cpu";
-				phy-mode = "sgmii";
-				ethernet = <&dp2>;
-				qca,sgmii-enable-pll;
-
-				fixed-link {
-					speed = <1000>;
-					full-duplex;
-				};
-			};
-		};
-	};
 };
 
 &sleep_clk {
@@ -306,7 +315,7 @@
 	};
 
     nand@0 {
-        compatible = "spi-nand";
+        	compatible = "spi-nand";
 		reg = <0>;
 		#address-cells = <1>;
 		#size-cells = <1>;
@@ -398,8 +407,13 @@
 			};
 
             partition@800000 {
+				label = "log";
+				reg = <0x00800000 0x200000>;
+			};
+
+            partition@a00000 {
 				label = "rootfs";
-				reg = <0x00800000 0x7800000>;
+				reg = <0x00a00000 0x7600000>;
 			};
         };
     };
@@ -421,17 +435,118 @@
 			bias-pull-up;
 		};
 	};
+
+    pwm_pins: pwm_pinmux {
+		mux {
+			pins = "gpio13";
+			function = "pwm3";
+			drive-strength = <8>;
+		};
+	};
+
+    fan_pins: fan_pins {
+		pwr {
+			pins = "gpio34";
+			function = "gpio";
+			output-high;
+		};
+
+		speed {
+			pins = "gpio26";
+			function = "gpio";
+			drive-strength = <8>;
+			bias-disable;
+		};
+	};
+
+	usbhub_pins: usbhub_pins {
+		hub_reset {
+			pins = "gpio33";
+			function = "gpio";
+			drive-strength = <8>;
+			bias-disable;
+			output-high;
+		};
+	};
+
+    cellular_pins: cellular_pins {
+		cellular_en {
+			pins = "gpio12";
+			function = "gpio";
+			drive-strength = <8>;
+			bias-disable;
+			output-low;
+		};
+
+		cellular_reset {
+			pins = "gpio22";
+			function = "gpio";
+			drive-strength = <8>;
+			bias-disable;
+			output-low;
+		};
+
+		cellular_power {
+			pins = "gpio38";
+			function = "gpio";
+			drive-strength = <8>;
+			bias-disable;
+			output-low;
+		};
+	};
 	
 	leds_pins: leds_pins {
-		led_system_blue {
+		led_system_power {
+			pins = "gpio28";
+			function = "gpio";
+			drive-strength = <8>;
+			bias-pull-down;
+		};
+
+		led_status_internet {
+			pins = "gpio32";
+			function = "gpio";
+			drive-strength = <8>;
+			bias-pull-down;
+		};
+
+		wlan2g {
+			pins = "gpio1";
+			function = "gpio";
+			drive-strength = <8>;
+			bias-pull-down;
+		};
+
+		wlan5g {
+			pins = "gpio31";
+			function = "gpio";
+			drive-strength = <8>;
+			bias-pull-down;
+		};
+
+		lte1 {
+			pins = "gpio44";
+			function = "gpio";
+			drive-strength = <8>;
+			bias-pull-down;
+		};
+
+		lte2 {
 			pins = "gpio24";
 			function = "gpio";
 			drive-strength = <8>;
 			bias-pull-down;
 		};
-		
-		led_status_white {
-			pins = "gpio23";
+
+		lte3 {
+			pins = "gpio17";
+			function = "gpio";
+			drive-strength = <8>;
+			bias-pull-down;
+		};
+
+		lte4 {
+			pins = "gpio19";
 			function = "gpio";
 			drive-strength = <8>;
 			bias-pull-down;
@@ -478,6 +593,23 @@
 		drive-strength = <8>;
 		bias-disable;
 	};
+
+    	blsp1_uart_pins: blsp1_uart_pins {
+		blsp1_uart_rx_tx {
+			pins = "gpio23", "gpio25";
+			function = "blsp1_uart2";
+			bias-disable;
+		};
+	};
+
+	blsp0_spi_pins: blsp0_spi_pins {
+		mux {
+			pins = "gpio10", "gpio11";
+			function = "blsp0_spi";
+			drive-strength = <2>;
+			bias-disable;
+		};
+	};
 };
 
 &tsens {
@@ -496,7 +628,7 @@
 &usbphy0 {
 	status = "okay";
 };
-
+ 
 &q6v5_wcss {
 	status = "okay";
 
@@ -619,7 +751,7 @@
 	qcom,userpd-subsys-name = "q6v5_wcss_userpd1";
 
 	// Can be overridden by /etc/hotplug.d/firmware/10-ath11k-board_id
-	//qcom,board_id = <0x23>;
+	//qcom,board_id = <0x24>;
 
 	qcom,ath11k-calibration-variant = "GL-iNet-GL-X2000";
 	qcom,ath11k-fw-memory-mode = <2>;
@@ -643,3 +775,5 @@
 
 	status = "okay";
 };
+
+
