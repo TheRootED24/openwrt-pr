@@ -14,6 +14,12 @@ platform_do_upgrade() {
 	linksys,mx5500)
 		platform_do_upgrade_linksys "$1"
 		;;
+	glinet,gl-b3000)
+		REQUIRE_IMAGE_METADATA=0
+		CI_UBIPART="rootfs"
+		[ "$(find_mtd_chardev rootfs)" ] && CI_UBIPART="rootfs"
+		nand_do_upgrade "$1"
+       		;;
 	*)
 		default_do_upgrade "$1"
 		;;
